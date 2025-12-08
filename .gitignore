@@ -1,0 +1,69 @@
+# macOS cruft
+.DS_Store
+
+# Xcode derived output
+DerivedData/
+xcuserdata/
+
+# Generated build artifacts
+build/
+
+# Swift Package Manager cache
+.swiftpm/
+.build/
+
+# Xcode
+#
+# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+
+## User settings
+xcuserdata/
+
+## compatibility with Xcode 8 and earlier (ignoring not required starting Xcode 9)
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserstate
+project.xcworkspace/
+!project.xcworkspace/contents.xcworkspacedata
+/*.gcno
+
+## Mac OS X
+.DS_Store
+
+## App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+## Swift Package Manager
+# Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
+# Packages/
+# Package.pins
+# .swiftpm/
+
+## CocoaPods
+# We recommend against adding the Pods directory to your .gitignore. However
+# you should judge for yourself, the pros and cons are mentioned at:
+# https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
+# Pods/
+# Podfile.lock
+
+## Carthage
+# Carthage/Build/
+
+## fastlane
+# It is recommended to not ignore the screenshots in the fastlane directory.
+
+## Accio dependency manager
+Dependencies/
+.accio/
+
+## xcov
+xcov_report/
+
+

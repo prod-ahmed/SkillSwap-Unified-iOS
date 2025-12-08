@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- VoIP Background Mode for CallKit -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>voip</string>
+	</array>
+	
+	<!-- Microphone Permission (REQUIRED for calls) -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>SkillSwap needs access to your microphone for voice calls.</string>
+	
+	<!-- Camera Permission (REQUIRED for video calls) -->
+	<key>NSCameraUsageDescription</key>
+	<string>SkillSwap needs access to your camera for video calls.</string>
+	
+	<!-- Network Security Settings -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>192.168.100.150</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>localhost</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	
+	<!-- Local Network Access -->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>SkillSwap needs to access your local network to connect to the development server.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_http._tcp</string>
+	</array>
+</dict>
+</plist>
