@@ -13,6 +13,7 @@ struct SessionsView: View {
     @State private var ratingSession: Session?
     @State private var showNotifications = false
     @State private var selectedSessionForPlan: Session?
+    @State private var showCalendar = false
 
     var body: some View {
         NavigationStack {
@@ -97,6 +98,9 @@ struct SessionsView: View {
             }
             .sheet(isPresented: $showNotifications) {
                 NotificationsView(viewModel: NotificationsViewModel())
+            }
+            .sheet(isPresented: $showCalendar) {
+                CalendarView()
             }
             .sheet(item: $selectedSessionForPlan) { session in
                 LessonPlanView(
@@ -196,6 +200,14 @@ struct SessionsView: View {
             Text(localization.localized(.mySessions))
                 .font(.title3.bold())
             Spacer()
+            Button {
+                showCalendar = true
+            } label: {
+                Image(systemName: "calendar")
+                    .font(.title3)
+                    .foregroundColor(.primary)
+            }
+            .buttonStyle(.plain)
             Button {
                 showNotifications = true
             } label: {

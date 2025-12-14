@@ -6,6 +6,7 @@ struct MainTabView: View {
     @State private var selectedTab: AppTab = .discover
     @State private var showNotificationsSheet = false
     @State private var showProfileSheet = false
+    @State private var showChatSheet = false
     @StateObject private var notificationsViewModel = NotificationsViewModel()
 
     @State private var isKeyboardVisible = false
@@ -16,7 +17,8 @@ struct MainTabView: View {
                 title: selectedTab.title,
                 unreadCount: notificationsViewModel.unreadCount,
                 onNotificationsTap: { showNotificationsSheet = true },
-                onProfileTap: { showProfileSheet = true }
+                onProfileTap: { showProfileSheet = true },
+                showChatSheet: $showChatSheet
             )
             Divider()
             Group {
@@ -46,6 +48,9 @@ struct MainTabView: View {
         }
         .sheet(isPresented: $showProfileSheet) {
             ProfileView()
+        }
+        .sheet(isPresented: $showChatSheet) {
+            ChatView()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
             withAnimation(.easeInOut(duration: 0.2)) {
@@ -112,6 +117,7 @@ private struct MainTopBar: View {
     let unreadCount: Int
     let onNotificationsTap: () -> Void
     let onProfileTap: () -> Void
+    let showChatSheet: Binding<Bool>
 
     var body: some View {
         HStack(alignment: .center) {
@@ -124,6 +130,7 @@ private struct MainTopBar: View {
             }
             Spacer()
             HStack(spacing: 12) {
+                topIconButton(systemName: "message.fill", showBadge: false, badgeValue: 0, action: { showChatSheet.wrappedValue = true })
                 topIconButton(systemName: "bell.fill", showBadge: unreadCount > 0, badgeValue: unreadCount, action: onNotificationsTap)
                 topIconButton(systemName: "person.crop.circle", showBadge: false, badgeValue: 0, action: onProfileTap)
             }
