@@ -30,11 +30,16 @@ class ChatSocketService: ObservableObject {
             .reconnectWait(1),
             .forceNew(true)
         ]
-        
+
         // Add userId to query if available (access MainActor property safely)
         if let userId = UserDefaults.standard.data(forKey: "currentUser")
             .flatMap({ try? JSONDecoder().decode(User.self, from: $0) })?.id {
             config.insert(.connectParams(["userId": userId]))
+        }
+
+        // Propagate bearer token for servers that require auth on socket handshake
+        if let token = AuthenticationManager.shared.accessToken, !token.isEmpty {
+            config.insert(.extraHeaders(["Authorization": "Bearer \(token)"]))
         }
         
         manager = SocketManager(socketURL: socketURL, config: config)
@@ -168,5 +173,4 @@ class ChatSocketService: ObservableObject {
         registerListener(event: "message:deleted", handler: handler)
     }
 }
-
 

@@ -27,28 +27,24 @@ struct GoogleAuthView: View {
                 Spacer()
                 
                 // Google Sign In Button
+                // Disabled until Google Sign-In SDK + backend endpoint are wired
                 Button {
-                    Task {
-                        let success = await viewModel.signInWithGoogle()
-                        if success {
-                            onSuccess()
-                        }
-                    }
+                    viewModel.errorMessage = "Google Sign-In arrive bientôt"
                 } label: {
                     HStack {
                         Image(systemName: "g.circle.fill")
                             .font(.title3)
-                        Text("Continue with Google")
+                        Text("Continue with Google (bientôt)")
                             .font(.headline)
                     }
-                    .foregroundColor(.white)
+                    .foregroundColor(.white.opacity(0.5))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
-                    .background(Color.red)
+                    .background(Color.red.opacity(0.5))
                     .cornerRadius(12)
                 }
                 .padding(.horizontal)
-                .disabled(viewModel.isLoading)
+                .disabled(true)
                 
                 if viewModel.isLoading {
                     ProgressView()

@@ -77,7 +77,7 @@ struct WeeklyObjectiveProvider: TimelineProvider {
             return nil
         }
         
-        let baseURL = sharedDefaults?.string(forKey: "baseURL") ?? "https://l06wdxq5-3000.uks1.devtunnels.ms"
+        let baseURL = sharedDefaults?.string(forKey: "baseURL") ?? "https://p8hkmhq3-3000.euw.devtunnels.ms"
         
         guard let url = URL(string: "\(baseURL)/weekly-objectives/current") else {
             return nil

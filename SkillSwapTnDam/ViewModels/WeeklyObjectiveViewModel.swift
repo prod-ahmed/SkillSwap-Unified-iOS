@@ -23,7 +23,11 @@ final class WeeklyObjectiveViewModel: ObservableObject {
     
     private let service = WeeklyObjectiveService.shared
     private let authManager = AuthenticationManager.shared
-    private let geminiAPIKey = "AIzaSyB0A6A2pYTsmQd80XIZeeKRMpr4BipHrEs"
+    private var geminiAPIKey: String {
+        // Read from environment or Info.plist instead of hardcoding
+        ProcessInfo.processInfo.environment["GEMINI_API_KEY"] ?? 
+        Bundle.main.object(forInfoDictionaryKey: "GEMINI_API_KEY") as? String ?? ""
+    }
     
     var hasActiveObjective: Bool {
         currentObjective != nil

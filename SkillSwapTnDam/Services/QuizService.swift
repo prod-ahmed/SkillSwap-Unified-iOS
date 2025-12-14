@@ -24,12 +24,20 @@ struct QuizResult: Codable, Identifiable {
 class QuizService {
     static let shared = QuizService()
     
-    // ⚠️ PUT YOUR OPENAI API KEY HERE
-    private let apiKey = ""
+    private var apiKey: String {
+        // Read from environment or Info.plist instead of hardcoding
+        ProcessInfo.processInfo.environment["OPENAI_API_KEY"] ?? 
+        Bundle.main.object(forInfoDictionaryKey: "OPENAI_API_KEY") as? String ?? ""
+    }
     
     private let baseURL = "https://api.openai.com/v1/chat/completions"
     
     func generateQuiz(subject: String, level: Int) async throws -> [QuizQuestion] {
+        guard !apiKey.isEmpty else {
+            throw NSError(domain: "QuizService", code: -1, 
+                         userInfo: [NSLocalizedDescriptionKey: "OpenAI API Key is missing. Please add OPENAI_API_KEY to your environment."])
+        }
+        
         let prompt = """
         Generate a quiz about "\(subject)" for level \(level) (where 1 is beginner and 10 is expert).
         Create 5 multiple choice questions.

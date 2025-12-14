@@ -2,23 +2,26 @@ import Foundation
 
 struct NetworkConfig {
     static var baseURL: String {
-        // Try to read from environment/Info.plist first
-        if let envURL = ProcessInfo.processInfo.environment["SKILLSWAP_API_URL"] {
-            return envURL
+        // Env override
+        if let envURL = ProcessInfo.processInfo.environment["SKILLSWAP_API_URL"],
+           !envURL.isEmpty {
+            return normalized(envURL)
         }
-        
-        // Try from Info.plist
+
+        // Info.plist override
         if let plistURL = Bundle.main.object(forInfoDictionaryKey: "API_BASE_URL") as? String,
            !plistURL.isEmpty {
-            return plistURL
+            return normalized(plistURL)
         }
-        
-        // Fallback to local development
-        #if targetEnvironment(simulator)
-        return "http://localhost:3000"
-        #else
-        return "http://192.168.1.15:3000"
-        #endif
+
+        // Persisted override (set by AuthenticationManager after login)
+        if let saved = UserDefaults.standard.string(forKey: "api_base_url"),
+           !saved.isEmpty {
+            return normalized(saved)
+        }
+
+        // Shared default fallback (aligns with Android BuildConfig default)
+        return "https://p8hkmhq3-3000.euw.devtunnels.ms"
     }
     
     static var socketURL: URL? {
@@ -53,5 +56,13 @@ struct NetworkConfig {
             return key
         }
         return ""
+    }
+
+    private static func normalized(_ value: String) -> String {
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.hasPrefix("http://") || trimmed.hasPrefix("https://") {
+            return trimmed
+        }
+        return "https://\(trimmed)"
     }
 }
