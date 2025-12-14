@@ -11,14 +11,22 @@ import SwiftUI
 @main
 struct SkillSwapTnDamApp: App {
     @StateObject private var localization = LocalizationManager.shared
-    @AppStorage("isDarkMode") private var isDarkMode = false
+    @AppStorage("themePreference") private var themePreference = "system" // system | light | dark
     @State private var deepLinkUrl: URL?
+    
+    private var preferredColorScheme: ColorScheme? {
+        switch themePreference {
+        case "light": return .light
+        case "dark": return .dark
+        default: return nil // follow system
+        }
+    }
     
     var body: some Scene {
         WindowGroup {
             RootView() // Start with RootView to handle onboarding and authentication
                 .environmentObject(AuthenticationManager.shared)
-                .preferredColorScheme(isDarkMode ? .dark : .light)
+                .preferredColorScheme(preferredColorScheme)
                 .environment(\.layoutDirection, localization.currentLanguage.isRTL ? .rightToLeft : .leftToRight)
                 .onOpenURL { url in
                     handleDeepLink(url)

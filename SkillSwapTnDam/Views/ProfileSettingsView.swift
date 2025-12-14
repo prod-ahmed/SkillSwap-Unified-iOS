@@ -4,6 +4,7 @@ struct ProfileSettingsView: View {
     @EnvironmentObject private var auth: AuthenticationManager
     @Environment(\.dismiss) private var dismiss
 
+    @AppStorage("themePreference") private var themePreference = "system" // system | light | dark
     @State private var username: String = ""
     @State private var email: String = ""
     @State private var location: String = ""
@@ -48,6 +49,19 @@ struct ProfileSettingsView: View {
 
                             TextField("Email", text: $email)
                                 .disabled(true)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Section(header: Text("Apparence")) {
+                            Picker("Thème", selection: $themePreference) {
+                                Text("Système").tag("system")
+                                Text("Clair").tag("light")
+                                Text("Sombre").tag("dark")
+                            }
+                            .pickerStyle(.segmented)
+                            
+                            Text("Choisissez un thème clair, sombre ou suivez le système.")
+                                .font(.footnote)
                                 .foregroundColor(.secondary)
                         }
 
