@@ -21,16 +21,16 @@ struct MainTabView: View {
             Divider()
             Group {
                 switch selectedTab {
+                case .promos:
+                    DiscoverView(initialSegment: .promos, showHeader: false)
+                case .annonces:
+                    DiscoverView(initialSegment: .annonces, showHeader: false)
                 case .discover:
-                    DiscoverView()
-                case .chat:
-                    ChatView()
-                case .sessions:
-                    SessionsView()
+                    DiscoverView(initialSegment: .profils, showHeader: false)
                 case .progress:
                     ProgressDashboardView()
-                case .map:
-                    PlaceholderTabView(title: "Carte")
+                case .sessions:
+                    SessionsView()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

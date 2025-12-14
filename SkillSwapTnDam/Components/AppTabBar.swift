@@ -1,41 +1,42 @@
 import SwiftUI
 
 enum AppTab: String, CaseIterable, Identifiable {
-    case discover
-    case chat
-    case sessions
+    case promos
+    case annonces
+    case discover // Profiles
     case progress
-    case map
+    case sessions
+    // case map // Ignored for now
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
-        case .discover: return LocalizationManager.shared.localized(.tabDiscover)
-        case .chat: return LocalizationManager.shared.localized(.tabMessages)
-        case .sessions: return LocalizationManager.shared.localized(.tabSessions)
+        case .promos: return LocalizationManager.shared.localized(.promos)
+        case .annonces: return LocalizationManager.shared.localized(.announcements)
+        case .discover: return LocalizationManager.shared.localized(.profiles)
         case .progress: return LocalizationManager.shared.localized(.tabProgress)
-        case .map: return LocalizationManager.shared.localized(.tabMap)
+        case .sessions: return LocalizationManager.shared.localized(.tabSessions)
         }
     }
 
     var systemImage: String {
         switch self {
-        case .discover: return "house.fill"
-        case .chat: return "bubble.left.and.text.bubble.right.fill"
-        case .sessions: return "calendar"
+        case .promos: return "tag.fill"
+        case .annonces: return "megaphone.fill"
+        case .discover: return "person.2.fill" // Or house.fill
         case .progress: return "chart.bar.fill"
-        case .map: return "map.fill"
+        case .sessions: return "calendar"
         }
     }
 
     var accentColor: Color {
         switch self {
+        case .promos: return .pink
+        case .annonces: return .green
         case .discover: return .orange
-        case .chat: return Color(red: 0.98, green: 0.35, blue: 0.25)
-        case .sessions: return Color(red: 0.07, green: 0.58, blue: 0.49)
         case .progress: return Color(red: 0.95, green: 0.56, blue: 0.14)
-        case .map: return Color(red: 0.36, green: 0.32, blue: 0.75)
+        case .sessions: return Color(red: 0.07, green: 0.58, blue: 0.49)
         }
     }
 }
@@ -44,42 +45,95 @@ struct AppTabBar: View {
     @Binding var selected: AppTab
 
     var body: some View {
-        HStack(spacing: 12) {
-            ForEach(AppTab.allCases) { tab in
-                Button(action: { selected = tab }) {
-                    VStack(spacing: 4) {
-                        Image(systemName: tab.systemImage)
-                            .font(.system(size: 18, weight: .semibold))
-                        Text(tab.title)
-                            .font(.caption2.weight(.semibold))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
-                    .foregroundColor(selected == tab ? tab.accentColor : .secondary)
-                    .background(
-                        Group {
-                            if selected == tab {
-                                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                    .fill(tab.accentColor.opacity(0.12))
-                            } else {
-                                Color.clear
-                            }
-                        }
-                    )
+        HStack(spacing: 0) {
+            // Left Group
+            tabButton(for: .promos)
+            Spacer()
+            tabButton(for: .annonces)
+            
+            Spacer()
+            
+            // Center Button (Profiles)
+            Button(action: { selected = .discover }) {
+                ZStack {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [Color(hex: "#FF6B35"), Color(hex: "#FFB347")],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 64, height: 64)
+                        .shadow(color: Color(hex: "#FF6B35").opacity(0.4), radius: 10, x: 0, y: 5)
+                    
+                    Image(systemName: "person.2.fill") // Profiles icon
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(.white)
                 }
-                .buttonStyle(.plain)
             }
+            .offset(y: -24)
+            .buttonStyle(.plain)
+            
+            Spacer()
+            
+            // Right Group
+            tabButton(for: .progress)
+            Spacer()
+            tabButton(for: .sessions)
         }
-        .padding(.horizontal, 18)
-        .padding(.top, 10)
-        .padding(.bottom, 22)
+        .padding(.horizontal, 24)
+        .padding(.top, 12)
+        .padding(.bottom, 34) // Safe area
         .background(
-            RoundedRectangle(cornerRadius: 32, style: .continuous)
-                .fill(Color.white)
-                .shadow(color: Color.black.opacity(0.08), radius: 18, x: 0, y: 6)
+            Color.white
+                .clipShape(CustomTabBarShape())
+                .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: -5)
         )
-        .padding(.horizontal)
-        .padding(.bottom)
+        .ignoresSafeArea()
+    }
+    
+    private func tabButton(for tab: AppTab) -> some View {
+        Button(action: { selected = tab }) {
+            VStack(spacing: 4) {
+                Image(systemName: tab.systemImage)
+                    .font(.system(size: 20, weight: .medium))
+                Text(tab.title)
+                    .font(.caption2.weight(.medium))
+            }
+            .foregroundColor(selected == tab ? tab.accentColor : .gray)
+            .frame(width: 60)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+struct CustomTabBarShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath()
+        let center = rect.width / 2
+        
+        path.move(to: CGPoint(x: 0, y: 0))
+        path.addLine(to: CGPoint(x: center - 50, y: 0))
+        
+        path.addCurve(
+            to: CGPoint(x: center, y: -20),
+            controlPoint1: CGPoint(x: center - 30, y: 0),
+            controlPoint2: CGPoint(x: center - 30, y: -20)
+        )
+        
+        path.addCurve(
+            to: CGPoint(x: center + 50, y: 0),
+            controlPoint1: CGPoint(x: center + 30, y: -20),
+            controlPoint2: CGPoint(x: center + 30, y: 0)
+        )
+        
+        path.addLine(to: CGPoint(x: rect.width, y: 0))
+        path.addLine(to: CGPoint(x: rect.width, y: rect.height))
+        path.addLine(to: CGPoint(x: 0, y: rect.height))
+        path.close()
+        
+        return Path(path.cgPath)
     }
 }
 

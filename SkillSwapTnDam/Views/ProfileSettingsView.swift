@@ -7,6 +7,8 @@ struct ProfileSettingsView: View {
     @State private var username: String = ""
     @State private var email: String = ""
     @State private var location: String = ""
+    @State private var teachSkills: [String] = []
+    @State private var learnSkills: [String] = []
     @State private var cities: [String] = []
     @State private var showCitySuggestions = false
     @State private var isLoading = false
@@ -19,7 +21,10 @@ struct ProfileSettingsView: View {
     private let userService = UserService()
 
     private var hasChanges: Bool {
-        username != originalUsername || location != originalLocation
+        username != originalUsername || 
+        location != originalLocation ||
+        teachSkills != (auth.currentUser?.skillsTeach ?? []) ||
+        learnSkills != (auth.currentUser?.skillsLearn ?? [])
     }
 
     private var canSave: Bool {
@@ -87,6 +92,24 @@ struct ProfileSettingsView: View {
                                     .padding(.top, 4)
                                 }
                             }
+                        }
+
+                        Section(header: Text("Compétences")) {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Je peux enseigner")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                SkillChipsEditor(skills: $teachSkills, color: .orange)
+                            }
+                            .padding(.vertical, 8)
+                            
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Je veux apprendre")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                SkillChipsEditor(skills: $learnSkills, color: .teal)
+                            }
+                            .padding(.vertical, 8)
                         }
 
                         if let errorMessage {
@@ -191,6 +214,8 @@ struct ProfileSettingsView: View {
         username = user.username
         email = user.email
         location = user.locationDisplay ?? ""
+        teachSkills = user.skillsTeach ?? []
+        learnSkills = user.skillsLearn ?? []
         originalUsername = username
         originalLocation = location
     }
@@ -227,8 +252,8 @@ struct ProfileSettingsView: View {
             username: username,
             email: nil,
             location: locationPayload,
-            skillsTeach: nil,
-            skillsLearn: nil,
+            skillsTeach: teachSkills,
+            skillsLearn: learnSkills,
             availability: nil
         )
 

@@ -32,6 +32,9 @@ struct DiscoverView: View {
     @State private var selectedProfile: DiscoverProfile?
     @State private var showChatWithThreadId: String?
     
+    var initialSegment: DiscoverViewModel.Segment?
+    var showHeader: Bool = true
+    
     // MARK: - Promos search & filters
     @State private var searchPromos: String = ""
     @State private var showOnlyActivePromos: Bool = false
@@ -51,7 +54,9 @@ struct DiscoverView: View {
             
             VStack(spacing: 0) {
                 // Custom Gradient Header
-                headerView
+                if showHeader {
+                    headerView
+                }
                 
                 // Content
                 if vm.isLoading {
@@ -122,6 +127,9 @@ struct DiscoverView: View {
             }
         }
         .task {
+            if let initial = initialSegment {
+                vm.segment = initial
+            }
             await vm.loadForCurrentSegment()
         }
         .onChange(of: vm.segment) { _ in

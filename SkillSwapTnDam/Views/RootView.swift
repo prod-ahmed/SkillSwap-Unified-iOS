@@ -2,9 +2,16 @@ import SwiftUI
 
 struct RootView: View {
     @EnvironmentObject private var auth: AuthenticationManager
-    @State private var hasCompletedOnboarding: Bool = false
-    @State private var needsProfileSetup: Bool = true
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding: Bool = false
     @ObservedObject private var callManager = CallManager.shared
+
+    private var needsProfileSetup: Bool {
+        guard let user = auth.currentUser else { return false }
+        // Check if essential fields are missing
+        let hasSkills = (user.skillsTeach?.isEmpty == false) || (user.skillsLearn?.isEmpty == false)
+        let hasLocation = user.location != nil
+        return !hasSkills || !hasLocation
+    }
 
     var body: some View {
         let _ = print("📱 [RootView] body evaluated - isAuthenticated: \(auth.isAuthenticated), isCallActive: \(callManager.isCallActive)")
@@ -27,7 +34,10 @@ struct RootView: View {
                         let _ = print("📱 [RootView] Showing: ProfileSetupView")
                         ProfileSetupView(onContinue: { 
                             print("📱 [RootView] Profile setup completed")
-                            needsProfileSetup = false 
+                            // Force refresh user to update the view state
+                            Task {
+                                try? await auth.refreshCurrentUser()
+                            }
                         })
                     } else {
                         let _ = print("📱 [RootView] Showing: MainTabView")

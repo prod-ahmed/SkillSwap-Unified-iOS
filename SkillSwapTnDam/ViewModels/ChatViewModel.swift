@@ -128,6 +128,9 @@ final class ChatViewModel: ObservableObject {
             if selectedThread?.id != message.threadId {
                 // We would need to increment unread count here locally or fetch threads again
                 // For now, let's just move it to top
+                var updatedThread = threads[0]
+                updatedThread.unreadCount += 1
+                threads[0] = updatedThread
             }
         } else {
             // New thread? Reload threads
@@ -180,16 +183,22 @@ final class ChatViewModel: ObservableObject {
     }
 
     func open(thread: ChatThread, markAsRead: Bool = true) async {
+        // Leave previous thread if any
+        if let previousThread = selectedThread {
+            chatSocketService.leaveThread(threadId: previousThread.id)
+        }
+        
         selectedThread = thread
         messages = []
         replyToMessage = nil
+        
+        // Join socket room BEFORE loading messages to ensure we don't miss anything
+        chatSocketService.joinThread(threadId: thread.id)
+        
         await loadMessages(for: thread)
         if markAsRead {
             await markSelectedThreadAsRead()
         }
-        
-        // Join socket room
-        chatSocketService.joinThread(threadId: thread.id)
     }
 
     func closeThread() {
@@ -201,6 +210,11 @@ final class ChatViewModel: ObservableObject {
         messages = []
         composerText = ""
         replyToMessage = nil
+        
+        // Refresh threads list to update unread counts/last messages
+        Task {
+            await loadThreads(reset: true)
+        }
     }
 
     func refreshMessages() async {

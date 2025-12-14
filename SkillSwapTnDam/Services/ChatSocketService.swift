@@ -38,9 +38,12 @@ class ChatSocketService: ObservableObject {
         }
         
         manager = SocketManager(socketURL: socketURL, config: config)
-        socket = manager?.socket(forNamespace: "/chat")
+        socket = manager?.socket(forNamespace: "/chat") // Ensure namespace matches backend
         
         setupListeners()
+        
+        // Auto-connect
+        socket?.connect()
     }
     
     private func setupListeners() {
@@ -118,9 +121,22 @@ class ChatSocketService: ObservableObject {
     }
     
     func joinThread(threadId: String) {
-        guard let socket = socket, socket.status == .connected else { return }
-        print("💬 [ChatSocket] Joining thread: \(threadId)")
-        socket.emit("chat:join", ["threadId": threadId])
+        guard let socket = socket else { return }
+        
+        // If not connected, connect first then join
+        if socket.status != .connected {
+            print("💬 [ChatSocket] Not connected, connecting before joining thread...")
+            socket.connect()
+            
+            // Wait for connection
+            socket.once(clientEvent: .connect) { [weak self] _, _ in
+                print("💬 [ChatSocket] Connected, now joining thread: \(threadId)")
+                self?.socket?.emit("chat:join", ["threadId": threadId])
+            }
+        } else {
+            print("💬 [ChatSocket] Joining thread: \(threadId)")
+            socket.emit("chat:join", ["threadId": threadId])
+        }
     }
     
     func leaveThread(threadId: String) {

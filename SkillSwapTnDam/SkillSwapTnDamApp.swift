@@ -19,7 +19,6 @@ struct SkillSwapTnDamApp: App {
                 .environmentObject(AuthenticationManager.shared)
                 .preferredColorScheme(isDarkMode ? .dark : .light)
                 .environment(\.layoutDirection, localization.currentLanguage.isRTL ? .rightToLeft : .leftToRight)
-                .id(localization.currentLanguage.id) // Force full app redraw on language change
         }
     }
 }

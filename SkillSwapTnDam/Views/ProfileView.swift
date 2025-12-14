@@ -16,6 +16,7 @@ struct ProfileView: View {
     @State private var showSettings = false
     @State private var showSessionsPourVous = false
     @State private var showWeeklyObjective = false
+    @State private var showQuizzes = false
     @State private var showLanguagePicker = false
     @State private var avatarPickerItem: PhotosPickerItem?
     @State private var isUploadingAvatar = false
@@ -90,6 +91,9 @@ struct ProfileView: View {
             }
             .sheet(isPresented: $showWeeklyObjective) {
                 WeeklyObjectiveView()
+            }
+            .sheet(isPresented: $showQuizzes) {
+                QuizzesView()
             }
             .sheet(isPresented: $showLanguagePicker) {
                 LanguagePickerView(selectedLanguage: $appLanguage)
@@ -505,6 +509,16 @@ extension ProfileView {
                             showWeeklyObjective = true
                         }
                         
+                        // Quizzes
+                        ProfileActionButton(
+                            icon: "gamecontroller.fill",
+                            title: "Quizzes AI",
+                            iconColor: .purple,
+                            showChevron: true
+                        ) {
+                            showQuizzes = true
+                        }
+                        
                         // Sessions pour vous
                         ProfileActionButton(
                             icon: "sparkles",
@@ -890,4 +904,572 @@ struct LanguagePickerView: View {
 #Preview {
     ProfileView()
         .environmentObject(AuthenticationManager.shared)
+}
+
+// MARK: - Quizzes Feature (Appended to ensure visibility)
+
+struct QuizzesView: View {
+    @State private var subject: String = ""
+    @State private var isEditingSubject = true
+    @State private var showHistory = false
+    @StateObject private var service = QuizServiceWrapper()
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 0) {
+                // Header
+                VStack(spacing: 16) {
+                    Text("AI Quiz Roadmap")
+                        .font(.title2.bold())
+                        .foregroundColor(.white)
+                    
+                    if isEditingSubject {
+                        HStack {
+                            TextField("Enter a subject (e.g. Swift, History)", text: $subject)
+                                .textFieldStyle(.roundedBorder)
+                                .foregroundColor(.black)
+                            
+                            Button("Start") {
+                                if !subject.isEmpty {
+                                    withAnimation {
+                                        isEditingSubject = false
+                                        service.loadProgress(for: subject)
+                                    }
+                                }
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(.white)
+                            .foregroundColor(.purple)
+                            .disabled(subject.isEmpty)
+                        }
+                        .padding()
+                    } else {
+                        HStack {
+                            Text("Subject: \(subject)")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                            
+                            Spacer()
+                            
+                            Button("Change") {
+                                withAnimation {
+                                    isEditingSubject = true
+                                }
+                            }
+                            .font(.subheadline)
+                            .foregroundColor(.white.opacity(0.8))
+                        }
+                        .padding()
+                    }
+                }
+                .padding(.top)
+                .background(Color.purple)
+                
+                if !isEditingSubject {
+                    QuizRoadmapView(subject: subject, service: service)
+                } else {
+                    Spacer()
+                    Text("Enter a subject to see your roadmap")
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+            }
+            .navigationBarHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showHistory = true
+                    } label: {
+                        Image(systemName: "clock.arrow.circlepath")
+                    }
+                }
+            }
+            .sheet(isPresented: $showHistory) {
+                QuizHistoryView()
+            }
+        }
+    }
+}
+
+class QuizServiceWrapper: ObservableObject {
+    @Published var unlockedLevel: Int = 1
+    
+    func loadProgress(for subject: String) {
+        unlockedLevel = QuizService.shared.getUnlockedLevel(for: subject)
+    }
+    
+    func refresh(for subject: String) {
+        loadProgress(for: subject)
+    }
+}
+
+struct QuizRoadmapView: View {
+    let subject: String
+    @ObservedObject var service: QuizServiceWrapper
+    @State private var selectedLevel: Int?
+    
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 40) {
+                ForEach(1...10, id: \.self) { level in
+                    LevelNode(
+                        level: level,
+                        isUnlocked: level <= service.unlockedLevel,
+                        isCompleted: level < service.unlockedLevel,
+                        action: {
+                            if level <= service.unlockedLevel {
+                                selectedLevel = level
+                            }
+                        }
+                    )
+                    
+                    if level < 10 {
+                        Rectangle()
+                            .fill(level < service.unlockedLevel ? Color.purple : Color.gray.opacity(0.3))
+                            .frame(width: 4, height: 40)
+                    }
+                }
+            }
+            .padding(.vertical, 40)
+            .frame(maxWidth: .infinity)
+        }
+        .fullScreenCover(item: $selectedLevel) { level in
+            QuizGameView(subject: subject, level: level) {
+                service.refresh(for: subject)
+            }
+        }
+    }
+}
+
+extension Int: Identifiable {
+    public var id: Int { self }
+}
+
+struct LevelNode: View {
+    let level: Int
+    let isUnlocked: Bool
+    let isCompleted: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            ZStack {
+                Circle()
+                    .fill(backgroundColor)
+                    .frame(width: 80, height: 80)
+                    .shadow(color: backgroundColor.opacity(0.5), radius: 10, x: 0, y: 5)
+                
+                if isCompleted {
+                    Image(systemName: "checkmark")
+                        .font(.title.bold())
+                        .foregroundColor(.white)
+                } else if isUnlocked {
+                    Text("\(level)")
+                        .font(.title.bold())
+                        .foregroundColor(.white)
+                } else {
+                    Image(systemName: "lock.fill")
+                        .font(.title2)
+                        .foregroundColor(.white.opacity(0.6))
+                }
+            }
+        }
+        .disabled(!isUnlocked)
+    }
+    
+    var backgroundColor: Color {
+        if isCompleted { return .green }
+        if isUnlocked { return .purple }
+        return .gray
+    }
+}
+
+struct QuizGameView: View {
+    let subject: String
+    let level: Int
+    var onFinish: () -> Void
+    @Environment(\.dismiss) var dismiss
+    
+    @State private var questions: [QuizQuestion] = []
+    @State private var currentQuestionIndex = 0
+    @State private var score = 0
+    @State private var isLoading = true
+    @State private var errorMessage: String?
+    @State private var showResult = false
+    @State private var selectedOptionIndex: Int?
+    @State private var isAnswerChecked = false
+    
+    var body: some View {
+        VStack {
+            // Header
+            HStack {
+                Button("Quit") { dismiss() }
+                Spacer()
+                Text("Level \(level)")
+                    .font(.headline)
+                Spacer()
+                Text("\(currentQuestionIndex + 1)/\(questions.count)")
+            }
+            .padding()
+            
+            if isLoading {
+                Spacer()
+                ProgressView("Generating Quiz with AI...")
+                Spacer()
+            } else if let error = errorMessage {
+                Spacer()
+                Text(error).foregroundColor(.red)
+                Button("Retry") { loadQuiz() }
+                Spacer()
+            } else if showResult {
+                VStack(spacing: 20) {
+                    Text(passed ? "Level Complete!" : "Level Failed")
+                        .font(.largeTitle.bold())
+                        .foregroundColor(passed ? .green : .red)
+                    
+                    Text("Score: \(score)/\(questions.count)")
+                        .font(.title)
+                    
+                    if passed {
+                        Text("You have unlocked the next level!")
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("You need 50% to pass.")
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Button("Continue") {
+                        saveAndDismiss()
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+            } else {
+                // Question View
+                VStack(spacing: 24) {
+                    ProgressView(value: Double(currentQuestionIndex), total: Double(questions.count))
+                        .tint(.purple)
+                    
+                    Text(currentQuestion.question)
+                        .font(.title3.bold())
+                        .multilineTextAlignment(.center)
+                        .padding()
+                    
+                    VStack(spacing: 12) {
+                        ForEach(0..<currentQuestion.options.count, id: \.self) { index in
+                            Button {
+                                if !isAnswerChecked {
+                                    selectedOptionIndex = index
+                                    checkAnswer()
+                                }
+                            } label: {
+                                HStack {
+                                    Text(currentQuestion.options[index])
+                                        .foregroundColor(.primary)
+                                    Spacer()
+                                    if isAnswerChecked {
+                                        if index == currentQuestion.correctAnswerIndex {
+                                            Image(systemName: "checkmark.circle.fill").foregroundColor(.green)
+                                        } else if index == selectedOptionIndex {
+                                            Image(systemName: "xmark.circle.fill").foregroundColor(.red)
+                                        }
+                                    }
+                                }
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(optionBackground(for: index))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(optionBorder(for: index), lineWidth: 2)
+                                        )
+                                )
+                            }
+                            .disabled(isAnswerChecked)
+                        }
+                    }
+                    .padding(.horizontal)
+                    
+                    if isAnswerChecked {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Explanation:")
+                                .font(.headline)
+                            Text(currentQuestion.explanation)
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                            
+                            Button("Next Question") {
+                                nextQuestion()
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .frame(maxWidth: .infinity)
+                            .padding(.top)
+                        }
+                        .padding()
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(12)
+                        .padding()
+                    }
+                    
+                    Spacer()
+                }
+            }
+        }
+        .task {
+            loadQuiz()
+        }
+    }
+    
+    private var currentQuestion: QuizQuestion {
+        questions[currentQuestionIndex]
+    }
+    
+    private var passed: Bool {
+        Double(score) / Double(questions.count) >= 0.5
+    }
+    
+    private func loadQuiz() {
+        isLoading = true
+        errorMessage = nil
+        Task {
+            do {
+                questions = try await QuizService.shared.generateQuiz(subject: subject, level: level)
+                isLoading = false
+            } catch {
+                errorMessage = error.localizedDescription
+                isLoading = false
+            }
+        }
+    }
+    
+    private func checkAnswer() {
+        isAnswerChecked = true
+        if selectedOptionIndex == currentQuestion.correctAnswerIndex {
+            score += 1
+        }
+    }
+    
+    private func nextQuestion() {
+        if currentQuestionIndex < questions.count - 1 {
+            currentQuestionIndex += 1
+            selectedOptionIndex = nil
+            isAnswerChecked = false
+        } else {
+            showResult = true
+        }
+    }
+    
+    private func optionBackground(for index: Int) -> Color {
+        if isAnswerChecked {
+            if index == currentQuestion.correctAnswerIndex {
+                return Color.green.opacity(0.2)
+            } else if index == selectedOptionIndex {
+                return Color.red.opacity(0.2)
+            }
+        }
+        return Color(.systemBackground)
+    }
+    
+    private func optionBorder(for index: Int) -> Color {
+        if isAnswerChecked {
+            if index == currentQuestion.correctAnswerIndex {
+                return .green
+            } else if index == selectedOptionIndex {
+                return .red
+            }
+        }
+        return .clear
+    }
+    
+    private func saveAndDismiss() {
+        let result = QuizResult(
+            id: UUID().uuidString,
+            subject: subject,
+            level: level,
+            score: score,
+            totalQuestions: questions.count,
+            date: Date()
+        )
+        QuizService.shared.saveResult(result)
+        onFinish()
+        dismiss()
+    }
+}
+
+struct QuizHistoryView: View {
+    @Environment(\.dismiss) var dismiss
+    @State private var history: [QuizResult] = []
+    
+    var body: some View {
+        NavigationView {
+            List(history) { result in
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text(result.subject)
+                            .font(.headline)
+                        Spacer()
+                        Text("Level \(result.level)")
+                            .font(.subheadline)
+                            .padding(4)
+                            .background(Color.purple.opacity(0.2))
+                            .cornerRadius(4)
+                    }
+                    
+                    HStack {
+                        Text("Score: \(result.score)/\(result.totalQuestions)")
+                            .foregroundColor(Double(result.score)/Double(result.totalQuestions) >= 0.5 ? .green : .red)
+                        Spacer()
+                        Text(result.date, style: .date)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            .navigationTitle("Quiz History")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Close") { dismiss() }
+                }
+            }
+            .onAppear {
+                history = QuizService.shared.getHistory()
+            }
+        }
+    }
+}
+
+// MARK: - Quiz Service (Appended)
+
+struct QuizQuestion: Codable, Identifiable {
+    let id = UUID()
+    let question: String
+    let options: [String]
+    let correctAnswerIndex: Int
+    let explanation: String
+    
+    enum CodingKeys: String, CodingKey {
+        case question, options, correctAnswerIndex, explanation
+    }
+}
+
+struct QuizResult: Codable, Identifiable {
+    let id: String
+    let subject: String
+    let level: Int
+    let score: Int
+    let totalQuestions: Int
+    let date: Date
+}
+
+class QuizService {
+    static let shared = QuizService()
+    
+    // ⚠️ PUT YOUR OPENAI API KEY HERE
+    private let apiKey = ""
+    
+    private let baseURL = "https://api.openai.com/v1/chat/completions"
+    
+    func generateQuiz(subject: String, level: Int) async throws -> [QuizQuestion] {
+        let prompt = """
+        Generate a quiz about "\(subject)" for level \(level) (where 1 is beginner and 10 is expert).
+        Create 5 multiple choice questions.
+        Return ONLY a JSON array of objects with this structure:
+        [
+            {
+                "question": "Question text",
+                "options": ["Option A", "Option B", "Option C", "Option D"],
+                "correctAnswerIndex": 0, // 0-3
+                "explanation": "Brief explanation of the correct answer"
+            }
+        ]
+        Do not include markdown formatting like ```json.
+        """
+        
+        let body: [String: Any] = [
+            "model": "gpt-3.5-turbo",
+            "messages": [
+                ["role": "system", "content": "You are a helpful quiz generator."],
+                ["role": "user", "content": prompt]
+            ],
+            "temperature": 0.7
+        ]
+        
+        var request = URLRequest(url: URL(string: baseURL)!)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            if let errorJson = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                print("OpenAI Error: \(errorJson)")
+            }
+            throw NSError(domain: "QuizService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to generate quiz"])
+        }
+        
+        struct OpenAIResponse: Decodable {
+            struct Choice: Decodable {
+                struct Message: Decodable {
+                    let content: String
+                }
+                let message: Message
+            }
+            let choices: [Choice]
+        }
+        
+        let apiResponse = try JSONDecoder().decode(OpenAIResponse.self, from: data)
+        guard let content = apiResponse.choices.first?.message.content else {
+            throw NSError(domain: "QuizService", code: -1, userInfo: [NSLocalizedDescriptionKey: "No content in response"])
+        }
+        
+        // Clean up markdown if present
+        let cleanContent = content.replacingOccurrences(of: "```json", with: "").replacingOccurrences(of: "```", with: "")
+        
+        guard let jsonData = cleanContent.data(using: .utf8) else {
+             throw NSError(domain: "QuizService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to process content"])
+        }
+        
+        return try JSONDecoder().decode([QuizQuestion].self, from: jsonData)
+    }
+    
+    // MARK: - History Management (Local Persistence)
+    
+    private let historyKey = "quiz_history"
+    private let progressKey = "quiz_progress" // Map of Subject -> Max Level Unlocked
+    
+    func saveResult(_ result: QuizResult) {
+        var history = getHistory()
+        history.append(result)
+        if let data = try? JSONEncoder().encode(history) {
+            UserDefaults.standard.set(data, forKey: historyKey)
+        }
+        
+        // Update progress if passed (e.g. > 50%)
+        if Double(result.score) / Double(result.totalQuestions) >= 0.5 {
+            unlockNextLevel(subject: result.subject, currentLevel: result.level)
+        }
+    }
+    
+    func getHistory() -> [QuizResult] {
+        guard let data = UserDefaults.standard.data(forKey: historyKey),
+              let history = try? JSONDecoder().decode([QuizResult].self, from: data) else {
+            return []
+        }
+        return history.sorted(by: { $0.date > $1.date })
+    }
+    
+    func getUnlockedLevel(for subject: String) -> Int {
+        let progress = UserDefaults.standard.dictionary(forKey: progressKey) as? [String: Int] ?? [:]
+        return progress[subject] ?? 1
+    }
+    
+    private func unlockNextLevel(subject: String, currentLevel: Int) {
+        var progress = UserDefaults.standard.dictionary(forKey: progressKey) as? [String: Int] ?? [:]
+        let maxLevel = progress[subject] ?? 1
+        if currentLevel >= maxLevel && maxLevel < 10 {
+            progress[subject] = currentLevel + 1
+            UserDefaults.standard.set(progress, forKey: progressKey)
+        }
+    }
 }
