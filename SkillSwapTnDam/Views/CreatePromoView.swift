@@ -141,8 +141,10 @@ struct CreatePromoView: View {
         errorMessage = nil
         
         do {
-            let prompt = "Marketing banner for: \(title). \(description)"
-            let imageData = try await service.generateBannerImage(prompt: prompt)
+            let imageData = try await CloudflareAIService.shared.generatePromoBanner(
+                title: title,
+                description: description
+            )
             
             await MainActor.run {
                 selectedImageData = imageData
@@ -156,7 +158,11 @@ struct CreatePromoView: View {
         } catch {
             await MainActor.run {
                 isGeneratingImage = false
-                errorMessage = "Erreur lors de la génération: \(error.localizedDescription)"
+                if let cloudflareError = error as? CloudflareAIError {
+                    errorMessage = cloudflareError.localizedDescription
+                } else {
+                    errorMessage = "Erreur lors de la génération: \(error.localizedDescription)"
+                }
             }
         }
     }
@@ -281,7 +287,7 @@ struct CreatePromoView: View {
 
         do {
             // Create the promo first
-            let created = try await service.create(
+            var created = try await service.create(
                 title: title,
                 description: description,
                 discountPercent: discount,
@@ -294,7 +300,8 @@ struct CreatePromoView: View {
             // If there's an image, upload it
             if let data = selectedImageData {
                 let filename = "promo_\(created.id)_\(Date().timeIntervalSince1970).jpg"
-                _ = try await service.uploadImage(id: created.id, imageData: data, filename: filename)
+                let updated = try await service.uploadImage(id: created.id, imageData: data, filename: filename)
+                created = updated
             }
 
             await MainActor.run {

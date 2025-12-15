@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct QuizzesView: View {
-    @State private var subject: String = ""
+    @AppStorage("quiz_last_subject") private var subject: String = ""
     @State private var isEditingSubject = true
     @State private var showHistory = false
     @StateObject private var service = QuizServiceWrapper()
@@ -79,15 +79,32 @@ struct QuizzesView: View {
             .sheet(isPresented: $showHistory) {
                 QuizHistoryView()
             }
+            .onAppear {
+                // Restore saved subject and progress on appear
+                if !subject.isEmpty {
+                    isEditingSubject = false
+                    service.loadProgress(for: subject)
+                }
+            }
         }
     }
 }
 
 class QuizServiceWrapper: ObservableObject {
     @Published var unlockedLevel: Int = 1
+    @Published var isLoading: Bool = false
     
     func loadProgress(for subject: String) {
+        // Load from cache immediately
         unlockedLevel = QuizService.shared.getUnlockedLevel(for: subject)
+        
+        // Then fetch from backend asynchronously
+        isLoading = true
+        Task { @MainActor in
+            let level = await QuizService.shared.getUnlockedLevel(for: subject)
+            self.unlockedLevel = level
+            self.isLoading = false
+        }
     }
     
     func refresh(for subject: String) {
@@ -375,11 +392,10 @@ struct QuizGameView: View {
     private func saveAndDismiss() {
         let result = QuizResult(
             id: UUID().uuidString,
-            subject: subject,
+            skill: subject,
             level: level,
             score: score,
-            totalQuestions: questions.count,
-            date: Date()
+            totalQuestions: questions.count
         )
         QuizService.shared.saveResult(result)
         onFinish()
@@ -396,7 +412,7 @@ struct QuizHistoryView: View {
             List(history) { result in
                 VStack(alignment: .leading) {
                     HStack {
-                        Text(result.subject)
+                        Text(result.skill)
                             .font(.headline)
                         Spacer()
                         Text("Level \(result.level)")

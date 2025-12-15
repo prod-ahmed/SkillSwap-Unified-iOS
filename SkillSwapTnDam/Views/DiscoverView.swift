@@ -74,15 +74,46 @@ struct DiscoverView: View {
                         .padding(.top, 16)
                 }
             }
+            
+            // Floating Add Button (when header is hidden)
+            if !showHeader && vm.segment != .profils {
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Button {
+                            activeSheet = vm.segment == .annonces ? .annonce : .promo
+                        } label: {
+                            Image(systemName: "plus")
+                                .font(.system(size: 24, weight: .bold))
+                                .foregroundColor(.white)
+                                .frame(width: 56, height: 56)
+                                .background(
+                                    LinearGradient(
+                                        colors: [.skillCoral, .skillCoralLight],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .clipShape(Circle())
+                                .shadow(color: .skillCoral.opacity(0.4), radius: 8, x: 0, y: 4)
+                        }
+                        .padding(.trailing, 20)
+                        .padding(.bottom, 90) // 70px tab bar + 20px spacing
+                    }
+                }
+            }
         }
         .navigationBarHidden(true) // Hide default nav bar to use custom header
         .sheet(item: $activeSheet) { sheet in
             switch sheet {
             case .annonce:
-                CreateAnnonceView()
+                CreateAnnonceView(onAnnonceCreated: { newAnnonce in
+                    vm.annonces.insert(newAnnonce, at: 0)
+                })
             case .promo:
                 CreatePromoView { newPromo in
-                    vm.promos.append(newPromo)
+                    vm.promos.insert(newPromo, at: 0)
                 }
             }
         }

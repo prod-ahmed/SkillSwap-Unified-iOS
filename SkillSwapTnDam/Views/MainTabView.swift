@@ -12,31 +12,39 @@ struct MainTabView: View {
     @State private var isKeyboardVisible = false
 
     var body: some View {
-        VStack(spacing: 0) {
-            MainTopBar(
-                title: selectedTab.title,
-                unreadCount: notificationsViewModel.unreadCount,
-                onNotificationsTap: { showNotificationsSheet = true },
-                onProfileTap: { showProfileSheet = true },
-                showChatSheet: $showChatSheet
-            )
-            Divider()
-            Group {
-                switch selectedTab {
-                case .promos:
-                    DiscoverView(initialSegment: .promos, showHeader: false)
-                case .annonces:
-                    DiscoverView(initialSegment: .annonces, showHeader: false)
-                case .discover:
-                    DiscoverView(initialSegment: .profils, showHeader: false)
-                case .progress:
-                    ProgressDashboardView()
-                case .sessions:
-                    SessionsView()
+        ZStack(alignment: .bottom) {
+            VStack(spacing: 0) {
+                MainTopBar(
+                    title: selectedTab.title,
+                    unreadCount: notificationsViewModel.unreadCount,
+                    onNotificationsTap: { showNotificationsSheet = true },
+                    onProfileTap: { showProfileSheet = true },
+                    showChatSheet: $showChatSheet
+                )
+                Divider()
+                Group {
+                    switch selectedTab {
+                    case .promos:
+                        DiscoverView(initialSegment: .promos, showHeader: false)
+                    case .annonces:
+                        DiscoverView(initialSegment: .annonces, showHeader: false)
+                    case .discover:
+                        DiscoverView(initialSegment: .profils, showHeader: false)
+                    case .progress:
+                        ProgressDashboardView()
+                    case .sessions:
+                        SessionsView()
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                
+                // Spacer for tab bar height
+                if !isKeyboardVisible {
+                    Color.clear.frame(height: 90)
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-
+            
+            // Tab bar pinned to bottom
             if !isKeyboardVisible {
                 AppTabBar(selected: $selectedTab)
                     .transition(.move(edge: .bottom))

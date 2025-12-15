@@ -8,13 +8,19 @@
 
 /* Begin PBXBuildFile section */
 		070A1D16FF8D41A2A885037B /* SessionsPourVousView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAF64EB8B810467AB5D64E6B /* SessionsPourVousView.swift */; };
+		1A1207B551E842EFA20DCD0F /* CloudflareAIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB34471B20FF4BAB90C55804 /* CloudflareAIService.swift */; };
 		22311373014A425782904B51 /* SkillSwapTnDam/App/DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B81D6235FEC40F3B7535A16 /* SkillSwapTnDam/App/DeepLinkHandler.swift */; };
 		310E3F68F62848EB9159E259 /* SkillSwapTnDam/Features/Auth/Views/GoogleAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4769A5ADA06D45C4A5F1877F /* SkillSwapTnDam/Features/Auth/Views/GoogleAuthView.swift */; };
 		3B22717E955B411892D0B2C6 /* SkillSwapTnDam/Services/LessonPlanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD14994AE2246A89A069E9E /* SkillSwapTnDam/Services/LessonPlanService.swift */; };
+		4A9EA918907C4852A34BDD1A /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EB38A84CBBF45999B6EF76F /* CalendarView.swift */; };
+		50558F0F95CB4F679185FF43 /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CE5927EF2445F289C4EEEB /* CalendarViewModel.swift */; };
 		5513CCD21970C2AFCA0BCD2A /* CreateSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B58488ADD056988200B7FF /* CreateSessionView.swift */; };
 		5F3969E64172479C8721FB82 /* VideoCallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 745C2A8720B348E78EC7FB27 /* VideoCallView.swift */; };
+		673205B767404B8086A18B43 /* SocketService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F422E704C53C460CBC0C2FF6 /* SocketService.swift */; };
 		67DBB8610F87413DB2B03D7E /* EntityDetailViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0ECD29AF9B48BA9D31235E /* EntityDetailViews.swift */; };
+		794AB550161F4959A0DD7034 /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE48874961345FBA0E67FFF /* CalendarService.swift */; };
 		80A820B54713BC314B220D36 /* AvailabilitySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090CA68022763E0450BF4674 /* AvailabilitySheet.swift */; };
+		8113D0C2EE6741B59365A6DB /* ModerationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 923F9D60FDDC48B98E3CE03F /* ModerationService.swift */; };
 		8125D9996D75420A979EB414 /* SkillSwapTnDam/Core/Networking/UnifiedAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 823B8CE65DEB421CBD14D76C /* SkillSwapTnDam/Core/Networking/UnifiedAPIClient.swift */; };
 		9B6D3D11E65FE44684B73D08 /* LocationPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DBDA51ACAFBA7BCACD82175 /* LocationPickerView.swift */; };
 		9CB98C5FE3A3409EA9F450E7 /* SkillSwapTnDam/Features/AI/Views/LessonPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5AA198CB1034A0DAB6B72D9 /* SkillSwapTnDam/Features/AI/Views/LessonPlanView.swift */; };
@@ -47,6 +53,7 @@
 		D1198049DBAF4A6592825263 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33B4380FEF7421DAFFAA20D /* Session.swift */; };
 		D1F239F91CAF4ECB9C7B083D /* Recommendation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EFF98C131E423E9BC6644D /* Recommendation.swift */; };
 		D5A053278E17C0C52D343809 /* MemberChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1680F40930DC26B5FABBE19 /* MemberChip.swift */; };
+		D68E1FC9ED38446D9F677339 /* QuizService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520AD80A3EDD4FEEB36ECA23 /* QuizService.swift */; };
 		DA2FA453BBCC39CB5380D3EB /* RatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172912B8436126B390089FA9 /* RatingView.swift */; };
 		E2059A8A2EC17A09000B1708 /* ForgotPasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2059A892EC17A07000B1708 /* ForgotPasswordViewModel.swift */; };
 		E209D09E2EC933AC00B0A8F5 /* CreatePromoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E209D09D2EC9339900B0A8F5 /* CreatePromoView.swift */; };
@@ -80,8 +87,6 @@
 		E250EDE02EE64C59007273D4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E250EDDF2EE64C59007273D4 /* SwiftUI.framework */; };
 		E250EDF12EE64C5D007273D4 /* WeeklyObjectiveWidgetExtensionExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E250EDDB2EE64C58007273D4 /* WeeklyObjectiveWidgetExtensionExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		E26192882EDCD72C00B1CC44 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = E26192872EDCD72C00B1CC44 /* SocketIO */; };
-		E261928C2EDCDA0900B1CC44 /* ModerationService 3.swift in Sources */ = {isa = PBXBuildFile; fileRef = E261928B2EDCDA0900B1CC44 /* ModerationService 3.swift */; };
-		E261928E2EDCDA3600B1CC44 /* SocketService 3.swift in Sources */ = {isa = PBXBuildFile; fileRef = E261928D2EDCDA3600B1CC44 /* SocketService 3.swift */; };
 		E27E63D82EE3C77300D89569 /* SessionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27E63D72EE3C77300D89569 /* SessionsViewModel.swift */; };
 		E298B7212ED3535600483355 /* ReferralAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E298B7202ED3535500483355 /* ReferralAPI.swift */; };
 		E2C122DE2ECE3EAA00D3C4F1 /* EditPromoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C122DD2ECE3EAA00D3C4F1 /* EditPromoView.swift */; };
@@ -144,14 +149,19 @@
 		090CA68022763E0450BF4674 /* AvailabilitySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilitySheet.swift; sourceTree = "<group>"; };
 		0DBDA51ACAFBA7BCACD82175 /* LocationPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerView.swift; sourceTree = "<group>"; };
 		0DEB7412B2E7400181BC9CD6 /* SessionsPourVousViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionsPourVousViewModel.swift; sourceTree = "<group>"; };
+		0EB38A84CBBF45999B6EF76F /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		14CE5927EF2445F289C4EEEB /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
 		16B58488ADD056988200B7FF /* CreateSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSessionView.swift; sourceTree = "<group>"; };
 		172912B8436126B390089FA9 /* RatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingView.swift; sourceTree = "<group>"; };
 		4769A5ADA06D45C4A5F1877F /* SkillSwapTnDam/Features/Auth/Views/GoogleAuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillSwapTnDam/Features/Auth/Views/GoogleAuthView.swift; sourceTree = SOURCE_ROOT; };
 		50C642A01725428F999D4BC7 /* SkillSwapTnDam/Models/LessonPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillSwapTnDam/Models/LessonPlan.swift; sourceTree = SOURCE_ROOT; };
+		520AD80A3EDD4FEEB36ECA23 /* QuizService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizService.swift; sourceTree = "<group>"; };
 		5B81D6235FEC40F3B7535A16 /* SkillSwapTnDam/App/DeepLinkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillSwapTnDam/App/DeepLinkHandler.swift; sourceTree = SOURCE_ROOT; };
+		5EE48874961345FBA0E67FFF /* CalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarService.swift; sourceTree = "<group>"; };
 		745C2A8720B348E78EC7FB27 /* VideoCallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCallView.swift; sourceTree = "<group>"; };
 		77795A0520234905A14D5C33 /* SessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionService.swift; sourceTree = "<group>"; };
 		823B8CE65DEB421CBD14D76C /* SkillSwapTnDam/Core/Networking/UnifiedAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillSwapTnDam/Core/Networking/UnifiedAPIClient.swift; sourceTree = SOURCE_ROOT; };
+		923F9D60FDDC48B98E3CE03F /* ModerationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModerationService.swift; sourceTree = "<group>"; };
 		B0AD93012EBE04BC00D9BF84 /* SkillSwapTnDam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SkillSwapTnDam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0AD93042EBE04BC00D9BF84 /* SkillSwapTnDamApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillSwapTnDamApp.swift; sourceTree = "<group>"; };
 		B0AD93082EBE04BC00D9BF84 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -212,8 +222,6 @@
 		E250EDDB2EE64C58007273D4 /* WeeklyObjectiveWidgetExtensionExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WeeklyObjectiveWidgetExtensionExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		E250EDDD2EE64C59007273D4 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		E250EDDF2EE64C59007273D4 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
-		E261928B2EDCDA0900B1CC44 /* ModerationService 3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModerationService 3.swift"; sourceTree = "<group>"; };
-		E261928D2EDCDA3600B1CC44 /* SocketService 3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SocketService 3.swift"; sourceTree = "<group>"; };
 		E27E63D72EE3C77300D89569 /* SessionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionsViewModel.swift; sourceTree = "<group>"; };
 		E298B7202ED3535500483355 /* ReferralAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferralAPI.swift; sourceTree = "<group>"; };
 		E2C122DD2ECE3EAA00D3C4F1 /* EditPromoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPromoView.swift; sourceTree = "<group>"; };
@@ -235,7 +243,9 @@
 		E2F6A0172F2C8F9B005A4F1D /* ProgressDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressDashboardView.swift; sourceTree = "<group>"; };
 		E2F6A0182F2C90E8005A4F1D /* LocalNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationManager.swift; sourceTree = "<group>"; };
 		E33B4380FEF7421DAFFAA20D /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		EB34471B20FF4BAB90C55804 /* CloudflareAIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudflareAIService.swift; sourceTree = "<group>"; };
 		EE0ECD29AF9B48BA9D31235E /* EntityDetailViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityDetailViews.swift; sourceTree = "<group>"; };
+		F422E704C53C460CBC0C2FF6 /* SocketService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketService.swift; sourceTree = "<group>"; };
 		F8EFF98C131E423E9BC6644D /* Recommendation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recommendation.swift; sourceTree = "<group>"; };
 		FBD14994AE2246A89A069E9E /* SkillSwapTnDam/Services/LessonPlanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillSwapTnDam/Services/LessonPlanService.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -331,14 +341,17 @@
 				E2CDA7152EDCDF1E0096439C /* CallManager.swift */,
 				E2F6A0182F2C90E8005A4F1D /* LocalNotificationManager.swift */,
 				E20F0B212F5E3B7600F69AA1 /* ChatService.swift */,
-				E261928D2EDCDA3600B1CC44 /* SocketService 3.swift */,
 				E2F6A0122F2C8F9B005A4F1D /* NotificationService.swift */,
 				E2F6A0132F2C8F9B005A4F1D /* ProgressService.swift */,
 				E298B7202ED3535500483355 /* ReferralAPI.swift */,
-				E261928B2EDCDA0900B1CC44 /* ModerationService 3.swift */,
 				E209D0A12EC97B3B00B0A8F5 /* PromoImageStore.swift */,
 				E22902852EC90BE600168D4E /* PromoService.swift */,
 				E2CDA7282EDF746C0096439C /* ChatSocketService.swift */,
+				F422E704C53C460CBC0C2FF6 /* SocketService.swift */,
+				923F9D60FDDC48B98E3CE03F /* ModerationService.swift */,
+				5EE48874961345FBA0E67FFF /* CalendarService.swift */,
+				520AD80A3EDD4FEEB36ECA23 /* QuizService.swift */,
+				EB34471B20FF4BAB90C55804 /* CloudflareAIService.swift */,
 				E209D0A32ECA130600B0A8F5 /* AnnonceImageStore.swift */,
 				E22902832EC90BD100168D4E /* AnnonceService.swift */,
 				B0AD931C2EBE17EE00D9BF84 /* NetworkService.swift */,
@@ -398,6 +411,7 @@
 				E209D09D2EC9339900B0A8F5 /* CreatePromoView.swift */,
 				E22902872EC90F4600168D4E /* CreateAnnonceView.swift */,
 				E2301A972EC0F45B003669B2 /* SessionView.swift */,
+				0EB38A84CBBF45999B6EF76F /* CalendarView.swift */,
 				BAF64EB8B810467AB5D64E6B /* SessionsPourVousView.swift */,
 				EE0ECD29AF9B48BA9D31235E /* EntityDetailViews.swift */,
 				E2301A992EC0F61D003669B2 /* ProfileSettingsView.swift */,
@@ -468,6 +482,7 @@
 		E2F6A0202F2C908E005A4F1D /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				14CE5927EF2445F289C4EEEB /* CalendarViewModel.swift */,
 				E20F0B232F5E3B7600F69AA1 /* ChatViewModel.swift */,
 				E2F6A0142F2C8F9B005A4F1D /* NotificationsViewModel.swift */,
 				E2F6A0152F2C8F9B005A4F1D /* ProgressDashboardViewModel.swift */,
@@ -598,7 +613,6 @@
 				22311373014A425782904B51 /* SkillSwapTnDam/App/DeepLinkHandler.swift in Sources */,
 				310E3F68F62848EB9159E259 /* SkillSwapTnDam/Features/Auth/Views/GoogleAuthView.swift in Sources */,
 				E2F6A0382F2C90E8005A4F1D /* LocalNotificationManager.swift in Sources */,
-				E261928E2EDCDA3600B1CC44 /* SocketService 3.swift in Sources */,
 				E20F0B242F5E3B7600F69AA1 /* ChatViewModel.swift in Sources */,
 				E22902822EC90BB600168D4E /* Promo.swift in Sources */,
 				B0AD931D2EBE17EE00D9BF84 /* NetworkService.swift in Sources */,
@@ -618,6 +632,7 @@
 				B0AD93222EBE06AA00D9BF84 /* OnboardingView.swift in Sources */,
 				E209D0A42ECA130E00B0A8F5 /* AnnonceImageStore.swift in Sources */,
 				E2301A982EC0F461003669B2 /* SessionView.swift in Sources */,
+				4A9EA918907C4852A34BDD1A /* CalendarView.swift in Sources */,
 				B0AD93242EBE06AA00D9BF84 /* AuthViews.swift in Sources */,
 				B0AD93262EBE06AA00D9BF84 /* ProfileSetupView.swift in Sources */,
 				E20F0B222F5E3B7600F69AA1 /* ChatService.swift in Sources */,
@@ -625,7 +640,6 @@
 				B0AD93212EBE1A6200D9BF84 /* User.swift in Sources */,
 				E2405D112F1E1B3C005CE51D /* RewardsSummary.swift in Sources */,
 				E2405D132F1E1B8B005CE51D /* ReferralPreview.swift in Sources */,
-				E261928C2EDCDA0900B1CC44 /* ModerationService 3.swift in Sources */,
 				E209D0AC2ECD462F00B0A8F5 /* MyPromosView.swift in Sources */,
 				E27E63D82EE3C77300D89569 /* SessionsViewModel.swift in Sources */,
 				B0AD93272EBE47C100D9BF84 /* UserService .swift in Sources */,
@@ -657,6 +671,12 @@
 				B0AD933B2EBE0AC400D9BF84 /* MainTabView.swift in Sources */,
 				E2F6A0302F2C90E8005A4F1D /* NotificationItem.swift in Sources */,
 				E2CDA7292EDF746C0096439C /* ChatSocketService.swift in Sources */,
+				673205B767404B8086A18B43 /* SocketService.swift in Sources */,
+				8113D0C2EE6741B59365A6DB /* ModerationService.swift in Sources */,
+				794AB550161F4959A0DD7034 /* CalendarService.swift in Sources */,
+				D68E1FC9ED38446D9F677339 /* QuizService.swift in Sources */,
+				1A1207B551E842EFA20DCD0F /* CloudflareAIService.swift in Sources */,
+				50558F0F95CB4F679185FF43 /* CalendarViewModel.swift in Sources */,
 				E2F6A0312F2C90E8005A4F1D /* ProgressDashboard.swift in Sources */,
 				E2F6A0322F2C90E8005A4F1D /* NotificationService.swift in Sources */,
 				E2F6A0332F2C90E8005A4F1D /* ProgressService.swift in Sources */,
@@ -818,6 +838,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = SkillSwapTnDam/SkillSwapTnDam.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SkillSwapTnDam/Preview Content\"";
 				DEVELOPMENT_TEAM = L834KZ7M35;
@@ -848,6 +869,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = SkillSwapTnDam/SkillSwapTnDam.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SkillSwapTnDam/Preview Content\"";
 				DEVELOPMENT_TEAM = L834KZ7M35;
@@ -879,6 +901,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = WeeklyObjectiveWidgetExtension/WeeklyObjectiveWidgetExtension.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = L834KZ7M35;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -914,6 +937,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_ENTITLEMENTS = WeeklyObjectiveWidgetExtension/WeeklyObjectiveWidgetExtension.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = L834KZ7M35;
 				GCC_C_LANGUAGE_STANDARD = gnu17;

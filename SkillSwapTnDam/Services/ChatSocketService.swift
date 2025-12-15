@@ -38,7 +38,7 @@ class ChatSocketService: ObservableObject {
         }
 
         // Propagate bearer token for servers that require auth on socket handshake
-        if let token = AuthenticationManager.shared.accessToken, !token.isEmpty {
+        if let token = UserDefaults.standard.string(forKey: "authToken"), !token.isEmpty {
             config.insert(.extraHeaders(["Authorization": "Bearer \(token)"]))
         }
         

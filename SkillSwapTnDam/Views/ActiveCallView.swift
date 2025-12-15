@@ -20,13 +20,20 @@ struct ActiveCallView: View {
     }
     
     // MARK: - Audio Call Content
+    @ViewBuilder
     private var audioCallContent: some View {
+        let darkColor = Color(hex: "#1A1A1A")
+        let blueColor = Color(hex: "#2C3E50")
+        let orangeColor = Color(hex: "#FF6B35")
+        
         ZStack {
             // Background Gradient
-            LinearGradient(colors: [Color(hex: "#1A1A1A"), Color(hex: "#2C3E50")],
-                           startPoint: .top,
-                           endPoint: .bottom)
-                .ignoresSafeArea()
+            LinearGradient(
+                colors: [darkColor, blueColor],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
             
             VStack(spacing: 40) {
                 Spacer()
@@ -34,12 +41,12 @@ struct ActiveCallView: View {
                 // Caller Info
                 VStack(spacing: 16) {
                     Circle()
-                        .fill(Color(hex: "#FF6B35").opacity(0.2))
+                        .fill(orangeColor.opacity(0.2))
                         .frame(width: 120, height: 120)
                         .overlay(
                             Image(systemName: "person.fill")
                                 .font(.system(size: 60))
-                                .foregroundColor(Color(hex: "#FF6B35"))
+                                .foregroundColor(orangeColor)
                         )
                     
                     Text(callManager.remoteUser?.username ?? "Unknown User")

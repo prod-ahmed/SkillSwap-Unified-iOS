@@ -100,8 +100,11 @@ class AuthenticationManager: ObservableObject {
     
     /// Sync token to shared App Group for widget access
     private func syncTokenToWidget(_ token: String) {
+        print("🔐 [AuthManager] Syncing token to widget...")
         sharedDefaults?.set(token, forKey: "accessToken")
         sharedDefaults?.set(NetworkConfig.baseURL, forKey: "baseURL")
+        sharedDefaults?.synchronize()
+        print("🔐 [AuthManager] Widget sync complete - baseURL: \(NetworkConfig.baseURL)")
     }
 
     /// Fetch fresh /users/me and persist it

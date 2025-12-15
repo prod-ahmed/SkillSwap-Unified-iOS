@@ -13,6 +13,7 @@ struct MyPromosView: View {
     @State private var errorMessage: String?
     @State private var promoToDelete: Promo?
     @State private var promoToEdit: Promo?
+    @State private var showingCreateSheet = false
     @State private var searchText: String = ""
     @State private var showOnlyActive: Bool = false
     @State private var minDiscount: Int = 0
@@ -50,6 +51,13 @@ struct MyPromosView: View {
         .background(Color(.systemGroupedBackground))
         .navigationTitle("Mes promos")
         .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    showingCreateSheet = true
+                } label: {
+                    Image(systemName: "plus")
+                }
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
                     Section("Trier") {
@@ -104,6 +112,11 @@ struct MyPromosView: View {
                     }
                 }
             )
+        }
+        .sheet(isPresented: $showingCreateSheet) {
+            CreatePromoView(onPromoCreated: { newPromo in
+                promos.insert(newPromo, at: 0)
+            })
         }
     }
 

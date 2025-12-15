@@ -74,12 +74,22 @@ struct WeeklyObjectiveProvider: TimelineProvider {
         // Try to get token from shared App Group UserDefaults
         let sharedDefaults = UserDefaults(suiteName: "group.com.skillswaptn.app")
         guard let token = sharedDefaults?.string(forKey: "accessToken") else {
+            print("Widget: No access token found in shared defaults")
             return nil
         }
         
-        let baseURL = sharedDefaults?.string(forKey: "baseURL") ?? "https://p8hkmhq3-3000.euw.devtunnels.ms"
+        // Use stored baseURL or default to localhost for simulator
+        #if targetEnvironment(simulator)
+        let defaultURL = "http://localhost:3000"
+        #else
+        let defaultURL = "https://p8hkmhq3-3000.euw.devtunnels.ms"
+        #endif
+        
+        let baseURL = sharedDefaults?.string(forKey: "baseURL") ?? defaultURL
+        print("Widget: Using baseURL: \(baseURL)")
         
         guard let url = URL(string: "\(baseURL)/weekly-objectives/current") else {
+            print("Widget: Invalid URL")
             return nil
         }
         

@@ -23,11 +23,6 @@ final class WeeklyObjectiveViewModel: ObservableObject {
     
     private let service = WeeklyObjectiveService.shared
     private let authManager = AuthenticationManager.shared
-    private var geminiAPIKey: String {
-        // Read from environment or Info.plist instead of hardcoding
-        ProcessInfo.processInfo.environment["GEMINI_API_KEY"] ?? 
-        Bundle.main.object(forInfoDictionaryKey: "GEMINI_API_KEY") as? String ?? ""
-    }
     
     var hasActiveObjective: Bool {
         currentObjective != nil
@@ -230,89 +225,58 @@ final class WeeklyObjectiveViewModel: ObservableObject {
     }
     
     private func callGeminiAPI(prompt: String) async throws -> String {
-        // Reverting to gemini-2.0-flash-exp as it was the only one that returned 429 (found) instead of 404
-        let url = URL(string: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=\(geminiAPIKey)")!
+        // Use backend's Cloudflare AI endpoint
+        guard let url = URL(string: "\(NetworkConfig.baseURL)/ai/chat") else {
+            throw NSError(domain: "WeeklyObjective", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
+        }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.timeoutInterval = 60
         
+        // Add auth token if available
+        if let token = await authManager.accessToken {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
         let requestBody: [String: Any] = [
-            "contents": [
-                [
-                    "parts": [
-                        ["text": prompt]
-                    ]
-                ]
-            ],
-            "generationConfig": [
-                "temperature": 0.7,
-                "maxOutputTokens": 1024
-            ]
+            "message": prompt
         ]
         
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
         
-        // Retry logic with exponential backoff
-        let maxRetries = 3
-        var lastError: Error?
+        print("🤖 [WeeklyObjective] Calling backend AI...")
         
-        for attempt in 0..<maxRetries {
-            do {
-                if attempt > 0 {
-                    // Increase delay: 2s, 5s, 10s
-                    let seconds = attempt == 1 ? 2.0 : (attempt == 2 ? 5.0 : 10.0)
-                    let delay = UInt64(seconds * 1_000_000_000)
-                    try await Task.sleep(nanoseconds: delay)
-                }
-                
-                let (data, response) = try await URLSession.shared.data(for: request)
-                
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    throw NSError(domain: "GeminiAPI", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
-                }
-                
-                if httpResponse.statusCode == 429 {
-                    // Log 429
-                    print("Gemini API Rate Limit (429) on attempt \(attempt + 1)")
-                    throw NSError(domain: "GeminiAPI", code: 429, userInfo: [NSLocalizedDescriptionKey: "Rate limit exceeded"])
-                }
-                
-                guard (200...299).contains(httpResponse.statusCode) else {
-                    // Log error details for debugging
-                    if let errorJson = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                        print("Gemini API Error: \(errorJson)")
-                    }
-                    throw NSError(domain: "GeminiAPI", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "API request failed with status \(httpResponse.statusCode)"])
-                }
-                
-                return try parseGeminiResponse(data)
-                
-            } catch {
-                lastError = error
-                // If it's not a 429 or 5xx error, don't retry
-                let nsError = error as NSError
-                if nsError.code != 429 && nsError.code < 500 {
-                    throw error
-                }
-            }
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw NSError(domain: "WeeklyObjective", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
         }
         
-        throw lastError ?? NSError(domain: "GeminiAPI", code: 429, userInfo: [NSLocalizedDescriptionKey: "Service is busy. Please try again later."])
+        guard (200...299).contains(httpResponse.statusCode) else {
+            if let errorText = String(data: data, encoding: .utf8) {
+                print("❌ [WeeklyObjective] API Error: \(httpResponse.statusCode) - \(errorText)")
+            }
+            throw NSError(domain: "WeeklyObjective", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "API request failed with status \(httpResponse.statusCode)"])
+        }
+        
+        // Parse backend response
+        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let responseText = json["response"] as? String else {
+            throw NSError(domain: "WeeklyObjective", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response format"])
+        }
+        
+        print("✅ [WeeklyObjective] AI response received")
+        return responseText
     }
     
     private func parseGeminiResponse(_ data: Data) throws -> String {
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let candidates = json["candidates"] as? [[String: Any]],
-              let firstCandidate = candidates.first,
-              let content = firstCandidate["content"] as? [String: Any],
-              let parts = content["parts"] as? [[String: Any]],
-              let firstPart = parts.first,
-              let text = firstPart["text"] as? String else {
-            throw NSError(domain: "GeminiAPI", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response format"])
+              let response = json["response"] as? String else {
+            throw NSError(domain: "WeeklyObjective", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response format"])
         }
-        return text
+        return response
     }
     
     private func parseAIResponse(_ response: String) {

@@ -31,6 +31,7 @@ struct CreateAnnonceView: View {
     @State private var isImageSafe = true
 
     @State private var isGeneratingAI = false
+    @State private var isGeneratingAIImage = false
     @State private var showAIPrompt = false
     @State private var aiPrompt = ""
     
@@ -117,11 +118,26 @@ struct CreateAnnonceView: View {
                 }
 
                 Section("Image") {
-                    PhotosPicker(
-                        selection: $selectedItem,
-                        matching: .images
-                    ) {
-                        Label("Choisir une image", systemImage: "photo.on.rectangle")
+                    if isGeneratingAIImage {
+                        HStack {
+                            Spacer()
+                            ProgressView("Génération de l'image IA...")
+                            Spacer()
+                        }
+                    } else {
+                        Button {
+                            Task { await generateAIImage() }
+                        } label: {
+                            Label("Générer une image IA", systemImage: "sparkles")
+                        }
+                        .disabled(title.isEmpty)
+                        
+                        PhotosPicker(
+                            selection: $selectedItem,
+                            matching: .images
+                        ) {
+                            Label("Choisir une image", systemImage: "photo.on.rectangle")
+                        }
                     }
 
                     if let data = selectedImageData,
@@ -207,6 +223,42 @@ struct CreateAnnonceView: View {
                      self.errorMessage = "Quota reached until we change get the api key"
                 } else {
                      self.errorMessage = "AI Generation failed: \(error.localizedDescription)"
+                }
+            }
+        }
+    }
+    
+    private func generateAIImage() async {
+        guard !title.isEmpty else { return }
+        
+        isGeneratingAIImage = true
+        errorMessage = nil
+        
+        do {
+            let imageData = try await CloudflareAIService.shared.generateAnnonceImage(
+                title: title,
+                description: description,
+                category: category.isEmpty ? nil : category
+            )
+            
+            await MainActor.run {
+                selectedImageData = imageData
+                selectedItem = nil // Clear picker selection as we used AI
+                isGeneratingAIImage = false
+                imageRejected = false
+                isImageSafe = false // Will be checked by moderation
+            }
+            
+            // Check moderation on the generated image
+            await checkImageModeration(imageData)
+            
+        } catch {
+            await MainActor.run {
+                isGeneratingAIImage = false
+                if let cloudflareError = error as? CloudflareAIError {
+                    errorMessage = cloudflareError.localizedDescription
+                } else {
+                    errorMessage = "Erreur lors de la génération: \(error.localizedDescription)"
                 }
             }
         }
@@ -342,7 +394,7 @@ struct CreateAnnonceView: View {
 
         do {
             // Create the annonce first
-            let created = try await service.create(
+            var created = try await service.create(
                 title: title,
                 description: description,
                 imageUrl: nil,
@@ -353,14 +405,20 @@ struct CreateAnnonceView: View {
             // If there's an image, upload it
             if let data = selectedImageData {
                 let filename = "annonce_\(created.id)_\(Date().timeIntervalSince1970).jpg"
-                _ = try await service.uploadImage(id: created.id, imageData: data, filename: filename)
+                let updated = try await service.uploadImage(id: created.id, imageData: data, filename: filename)
+                created = updated
             }
 
-            onAnnonceCreated?(created)
-            dismiss()
+            await MainActor.run {
+                print("✅ Annonce créée avec succès")
+                onAnnonceCreated?(created)
+                dismiss()
+            }
 
         } catch {
-            errorMessage = error.localizedDescription
+            await MainActor.run {
+                errorMessage = error.localizedDescription
+            }
         }
     }
 

@@ -13,6 +13,7 @@ struct MyAnnoncesView: View {
     @State private var errorMessage: String?
     @State private var editingAnnonce: Annonce?
     @State private var annonceToDelete: Annonce?
+    @State private var showingCreateSheet = false
     @State private var searchText: String = ""
     @State private var selectedCategory: String?
     @State private var selectedCity: String?
@@ -51,6 +52,13 @@ struct MyAnnoncesView: View {
         .background(Color(.systemGroupedBackground))
         .navigationTitle("Mes annonces")
         .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    showingCreateSheet = true
+                } label: {
+                    Image(systemName: "plus")
+                }
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
                     Section("Trier") {
@@ -87,6 +95,11 @@ struct MyAnnoncesView: View {
                     annonces[idx] = updated
                 }
             }
+        }
+        .sheet(isPresented: $showingCreateSheet) {
+            CreateAnnonceView(onAnnonceCreated: { newAnnonce in
+                annonces.insert(newAnnonce, at: 0)
+            })
         }
         .alert(item: $annonceToDelete) { annonce in
             Alert(
