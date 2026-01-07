@@ -471,14 +471,54 @@ private struct ChatBubble: View {
                     
                     // Message Content
                     VStack(alignment: isOwn ? .trailing : .leading, spacing: 6) {
-                        Text(message.isDeleted == true ? localization.localized(.messageDeleted) : message.content)
-                            .font(.subheadline)
-                            .italic(message.isDeleted == true)
-                            .foregroundColor(isOwn ? .white : .primary)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 14)
-                            .background(bubbleBackground)
-                            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                        // Image attachment
+                        if let attachmentUrl = message.attachmentUrl, !attachmentUrl.isEmpty,
+                           message.type == .image || attachmentUrl.contains("image") || attachmentUrl.hasSuffix(".jpg") || attachmentUrl.hasSuffix(".jpeg") || attachmentUrl.hasSuffix(".png") || attachmentUrl.hasSuffix(".gif") {
+                            let imageURL: URL? = {
+                                if attachmentUrl.hasPrefix("http") {
+                                    return URL(string: attachmentUrl)
+                                } else if attachmentUrl.hasPrefix("/uploads") {
+                                    return URL(string: "\(NetworkConfig.baseURL)\(attachmentUrl)")
+                                } else {
+                                    return URL(string: "\(NetworkConfig.baseURL)/uploads/chat/\(attachmentUrl)")
+                                }
+                            }()
+                            
+                            if let url = imageURL {
+                                AsyncImage(url: url) { phase in
+                                    switch phase {
+                                    case .empty:
+                                        ProgressView()
+                                            .frame(width: 200, height: 150)
+                                    case .success(let image):
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(maxWidth: 200, maxHeight: 250)
+                                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                                    case .failure:
+                                        Image(systemName: "photo")
+                                            .font(.largeTitle)
+                                            .foregroundColor(.gray)
+                                            .frame(width: 200, height: 150)
+                                    @unknown default:
+                                        EmptyView()
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Text content (show if not empty or if no attachment)
+                        if !message.content.isEmpty || message.attachmentUrl == nil {
+                            Text(message.isDeleted == true ? localization.localized(.messageDeleted) : message.content)
+                                .font(.subheadline)
+                                .italic(message.isDeleted == true)
+                                .foregroundColor(isOwn ? .white : .primary)
+                                .padding(.vertical, 10)
+                                .padding(.horizontal, 14)
+                                .background(bubbleBackground)
+                                .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                        }
                         
                         // Reactions
                         if let reactions = message.reactions, !reactions.isEmpty {
