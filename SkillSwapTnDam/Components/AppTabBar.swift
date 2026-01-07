@@ -105,6 +105,17 @@ struct AppTabBar: View {
             .frame(width: 60)
         }
         .buttonStyle(.plain)
+        .tourTarget(id: tourTargetId(for: tab))
+    }
+    
+    private func tourTargetId(for tab: AppTab) -> String {
+        switch tab {
+        case .promos: return "tab_promos"
+        case .annonces: return "tab_annonces"
+        case .sessions: return "tab_sessions"
+        case .progress: return "tab_progress"
+        case .discover: return "tab_discover"
+        }
     }
 }
 

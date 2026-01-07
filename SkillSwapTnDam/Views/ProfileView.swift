@@ -609,6 +609,30 @@ extension ProfileView {
                         )
                     }
                     .padding(.top, 8)
+                    
+                    // Reset Tour Button (for testing)
+                    Button {
+                        GuidedTourManager.shared.resetTour()
+                        // Show confirmation
+                    } label: {
+                        HStack {
+                            Image(systemName: "arrow.counterclockwise")
+                                .font(.title3)
+                            Text("Relancer le guide")
+                                .font(.headline)
+                        }
+                        .foregroundColor(.blue)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color.blue.opacity(0.1))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                        )
+                    }
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 24)
@@ -1283,7 +1307,7 @@ struct QuizGameView: View {
             if index == currentQuestion.correctAnswerIndex {
                 return .green
             } else if index == selectedOptionIndex {
-                return .redVB
+                return .red
             }
         }
         return .clear

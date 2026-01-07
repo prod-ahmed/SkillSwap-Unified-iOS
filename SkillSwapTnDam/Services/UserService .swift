@@ -13,6 +13,8 @@ struct UpdateUserRequest: Encodable {
     var skillsTeach: [String]?
     var skillsLearn: [String]?
     var availability: [String]?
+    var bio: String?
+    var age: Int?
 }
 
 final class UserService {

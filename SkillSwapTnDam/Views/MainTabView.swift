@@ -8,6 +8,7 @@ struct MainTabView: View {
     @State private var showProfileSheet = false
     @State private var showChatSheet = false
     @StateObject private var notificationsViewModel = NotificationsViewModel()
+    @StateObject private var tourManager = GuidedTourManager.shared
 
     @State private var isKeyboardVisible = false
 
@@ -93,7 +94,14 @@ struct MainTabView: View {
             } else {
                 print("📱 [MainTabView] ⚠️ No user ID found, cannot connect socket")
             }
+            
+            // Start guided tour after a delay for first-time users
+            if tourManager.shouldShowTour {
+                try? await Task.sleep(nanoseconds: 800_000_000) // 0.8 seconds
+                tourManager.startTour()
+            }
         }
+        .withGuidedTour()
     }
 }
 
@@ -138,9 +146,9 @@ private struct MainTopBar: View {
             }
             Spacer()
             HStack(spacing: 12) {
-                topIconButton(systemName: "message.fill", showBadge: false, badgeValue: 0, action: { showChatSheet.wrappedValue = true })
-                topIconButton(systemName: "bell.fill", showBadge: unreadCount > 0, badgeValue: unreadCount, action: onNotificationsTap)
-                topIconButton(systemName: "person.crop.circle", showBadge: false, badgeValue: 0, action: onProfileTap)
+                topIconButton(systemName: "message.fill", showBadge: false, badgeValue: 0, tourId: nil, action: { showChatSheet.wrappedValue = true })
+                topIconButton(systemName: "bell.fill", showBadge: unreadCount > 0, badgeValue: unreadCount, tourId: "notifications_button", action: onNotificationsTap)
+                topIconButton(systemName: "person.crop.circle", showBadge: false, badgeValue: 0, tourId: nil, action: onProfileTap)
             }
         }
         .padding(.horizontal, 20)
@@ -149,7 +157,7 @@ private struct MainTopBar: View {
         .background(Color(.systemBackground).ignoresSafeArea(edges: .top))
     }
 
-    private func topIconButton(systemName: String, showBadge: Bool, badgeValue: Int, action: @escaping () -> Void) -> some View {
+    private func topIconButton(systemName: String, showBadge: Bool, badgeValue: Int, tourId: String?, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             ZStack(alignment: .topTrailing) {
                 Circle()
@@ -171,5 +179,19 @@ private struct MainTopBar: View {
             }
         }
         .buttonStyle(.plain)
+        .modifier(OptionalTourTargetModifier(id: tourId))
+    }
+}
+
+/// Optional tour target modifier - only applies if id is not nil
+struct OptionalTourTargetModifier: ViewModifier {
+    let id: String?
+    
+    func body(content: Content) -> some View {
+        if let id = id {
+            content.tourTarget(id: id)
+        } else {
+            content
+        }
     }
 }
