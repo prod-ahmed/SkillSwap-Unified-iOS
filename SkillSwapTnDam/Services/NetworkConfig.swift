@@ -24,10 +24,10 @@ struct NetworkConfig {
         // For iOS Simulator: localhost refers to the Mac host
         // For Android Emulator: 10.0.2.2 refers to the host
         #if targetEnvironment(simulator)
-        return "http://localhost:3000"
+        return "http://145.223.103.252:3001"
         #else
         // For physical devices, use your machine's IP or production URL
-        return "https://p8hkmhq3-3000.euw.devtunnels.ms"
+        return "http://145.223.103.252:3001"
         #endif
     }
     

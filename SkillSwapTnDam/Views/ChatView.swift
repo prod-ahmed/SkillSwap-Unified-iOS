@@ -473,7 +473,7 @@ private struct ChatBubble: View {
                     VStack(alignment: isOwn ? .trailing : .leading, spacing: 6) {
                         // Image attachment
                         if let attachmentUrl = message.attachmentUrl, !attachmentUrl.isEmpty,
-                           message.type == .image || attachmentUrl.contains("image") || attachmentUrl.hasSuffix(".jpg") || attachmentUrl.hasSuffix(".jpeg") || attachmentUrl.hasSuffix(".png") || attachmentUrl.hasSuffix(".gif") {
+                           message.type == .attachment || attachmentUrl.contains("image") || attachmentUrl.hasSuffix(".jpg") || attachmentUrl.hasSuffix(".jpeg") || attachmentUrl.hasSuffix(".png") || attachmentUrl.hasSuffix(".gif") {
                             let imageURL: URL? = {
                                 if attachmentUrl.hasPrefix("http") {
                                     return URL(string: attachmentUrl)

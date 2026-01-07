@@ -144,7 +144,7 @@ struct WeeklyObjectiveView: View {
                 // Progress bar
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
-                        Text(String(format: "%.1fh / %dh", objective.completedHours, objective.targetHours))
+                        Text("\(String(format: "%.1f", objective.completedHours))h / \(objective.targetHours)h")
                             .font(.subheadline.bold())
                         Spacer()
                         Text("\(objective.progressPercent)%")
@@ -480,7 +480,7 @@ struct WeeklyObjectiveHistoryView: View {
             }
             
             HStack {
-                Label(String(format: "%.1fh / %dh", objective.completedHours, objective.targetHours), systemImage: "clock")
+                Label("\(String(format: "%.1f", objective.completedHours))h / \(objective.targetHours)h", systemImage: "clock")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 

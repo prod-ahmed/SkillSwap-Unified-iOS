@@ -1283,7 +1283,7 @@ struct QuizGameView: View {
             if index == currentQuestion.correctAnswerIndex {
                 return .green
             } else if index == selectedOptionIndex {
-                return .redVB
+                return .red
             }
         }
         return .clear
