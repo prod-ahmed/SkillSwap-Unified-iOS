@@ -108,10 +108,6 @@
 		E2F6A0372F2C90E8005A4F1D /* ProgressDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F6A0172F2C8F9B005A4F1D /* ProgressDashboardView.swift */; };
 		E2F6A0382F2C90E8005A4F1D /* LocalNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F6A0182F2C90E8005A4F1D /* LocalNotificationManager.swift */; };
 		EA644011B8784AC69DFE2434 /* SkillSwapTnDam/Models/LessonPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C642A01725428F999D4BC7 /* SkillSwapTnDam/Models/LessonPlan.swift */; };
-		GT001TOUR12345678ABCDEF01 /* TourStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = GT002TOUR12345678ABCDEF02 /* TourStep.swift */; };
-		GT003TOUR12345678ABCDEF03 /* GuidedTourView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GT004TOUR12345678ABCDEF04 /* GuidedTourView.swift */; };
-		GT005TOUR12345678ABCDEF05 /* CoachMarkOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = GT006TOUR12345678ABCDEF06 /* CoachMarkOverlay.swift */; };
-		GT007TOUR12345678ABCDEF07 /* GuidedTourManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = GT008TOUR12345678ABCDEF08 /* GuidedTourManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -252,10 +248,6 @@
 		F422E704C53C460CBC0C2FF6 /* SocketService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketService.swift; sourceTree = "<group>"; };
 		F8EFF98C131E423E9BC6644D /* Recommendation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recommendation.swift; sourceTree = "<group>"; };
 		FBD14994AE2246A89A069E9E /* SkillSwapTnDam/Services/LessonPlanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillSwapTnDam/Services/LessonPlanService.swift; sourceTree = SOURCE_ROOT; };
-		GT002TOUR12345678ABCDEF02 /* TourStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SkillSwapTnDam/Views/GuidedTour/TourStep.swift"; sourceTree = SOURCE_ROOT; };
-		GT004TOUR12345678ABCDEF04 /* GuidedTourView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SkillSwapTnDam/Views/GuidedTour/GuidedTourView.swift"; sourceTree = SOURCE_ROOT; };
-		GT006TOUR12345678ABCDEF06 /* CoachMarkOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SkillSwapTnDam/Views/GuidedTour/CoachMarkOverlay.swift"; sourceTree = SOURCE_ROOT; };
-		GT008TOUR12345678ABCDEF08 /* GuidedTourManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SkillSwapTnDam/Managers/GuidedTourManager.swift"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -369,8 +361,7 @@
 				E2301AA32EC13500003669B2 /* AuthService.swift */,
 				B0AD93262EBE47C100D9BF84 /* UserService .swift */,
 				77795A0520234905A14D5C33 /* SessionService.swift */,
-			E2301AA12EC128B0003669B2 /* WeeklyObjectiveService.swift */,
-				GT008TOUR12345678ABCDEF08 /* GuidedTourManager.swift */,
+				E2301AA12EC128B0003669B2 /* WeeklyObjectiveService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -439,7 +430,6 @@
 				172912B8436126B390089FA9 /* RatingView.swift */,
 				0DBDA51ACAFBA7BCACD82175 /* LocationPickerView.swift */,
 				090CA68022763E0450BF4674 /* AvailabilitySheet.swift */,
-				GT009TOUR12345678ABCDEF09 /* GuidedTour */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -453,17 +443,7 @@
 				B0AD93362EBE0AC400D9BF84 /* AppTabBar.swift */,
 				D1680F40930DC26B5FABBE19 /* MemberChip.swift */,
 			);
-		path = Components;
-			sourceTree = "<group>";
-		};
-		GT009TOUR12345678ABCDEF09 /* GuidedTour */ = {
-			isa = PBXGroup;
-			children = (
-				GT002TOUR12345678ABCDEF02 /* TourStep.swift */,
-				GT004TOUR12345678ABCDEF04 /* GuidedTourView.swift */,
-				GT006TOUR12345678ABCDEF06 /* CoachMarkOverlay.swift */,
-			);
-			path = GuidedTour;
+			path = Components;
 			sourceTree = "<group>";
 		};
 		E250EDD52EE63C4F007273D4 /* WeeklyObjectiveWidget */ = {
@@ -713,10 +693,6 @@
 				9B6D3D11E65FE44684B73D08 /* LocationPickerView.swift in Sources */,
 				80A820B54713BC314B220D36 /* AvailabilitySheet.swift in Sources */,
 				D5A053278E17C0C52D343809 /* MemberChip.swift in Sources */,
-				GT001TOUR12345678ABCDEF01 /* TourStep.swift in Sources */,
-				GT003TOUR12345678ABCDEF03 /* GuidedTourView.swift in Sources */,
-				GT005TOUR12345678ABCDEF05 /* CoachMarkOverlay.swift in Sources */,
-				GT007TOUR12345678ABCDEF07 /* GuidedTourManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

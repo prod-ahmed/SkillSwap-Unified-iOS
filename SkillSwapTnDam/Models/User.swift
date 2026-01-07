@@ -27,8 +27,6 @@ struct User: Codable {
     let nombreParainnage: Int?
     let maxParannaige: Int?
     let codeParainnage: String?
-    let bio: String?
-    let age: Int?
 
     let skillsTeach: [String]?
     let skillsLearn: [String]?
@@ -42,7 +40,7 @@ struct User: Codable {
     enum CodingKeys: String, CodingKey {
         case id = "_id"
         case username, email, password, role, image, credits, ratingAvg, isVerified
-        case xp, nombreParainnage, maxParannaige, codeParainnage, bio, age
+        case xp, nombreParainnage, maxParannaige, codeParainnage
         case skillsTeach, skillsLearn, location, badges, availability, createdAt, updatedAt
         case v = "__v"
     }
@@ -145,8 +143,6 @@ extension User {
         self.nombreParainnage = nil
         self.maxParannaige = nil
         self.codeParainnage = nil
-        self.bio = nil
-        self.age = nil
         self.skillsTeach = nil
         self.skillsLearn = nil
         self.location = nil

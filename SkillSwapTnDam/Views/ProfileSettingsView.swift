@@ -8,8 +8,6 @@ struct ProfileSettingsView: View {
     @State private var username: String = ""
     @State private var email: String = ""
     @State private var location: String = ""
-    @State private var bio: String = ""
-    @State private var age: String = ""
     @State private var teachSkills: [String] = []
     @State private var learnSkills: [String] = []
     @State private var cities: [String] = []
@@ -20,16 +18,12 @@ struct ProfileSettingsView: View {
     @State private var successMessage: String?
     @State private var originalUsername: String = ""
     @State private var originalLocation: String = ""
-    @State private var originalBio: String = ""
-    @State private var originalAge: String = ""
 
     private let userService = UserService()
 
     private var hasChanges: Bool {
         username != originalUsername || 
         location != originalLocation ||
-        bio != originalBio ||
-        age != originalAge ||
         teachSkills != (auth.currentUser?.skillsTeach ?? []) ||
         learnSkills != (auth.currentUser?.skillsLearn ?? [])
     }
@@ -56,21 +50,6 @@ struct ProfileSettingsView: View {
                             TextField("Email", text: $email)
                                 .disabled(true)
                                 .foregroundColor(.secondary)
-                            
-                            TextField("Âge", text: $age)
-                                .keyboardType(.numberPad)
-                            
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Bio")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                TextEditor(text: $bio)
-                                    .frame(minHeight: 80)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .stroke(Color(.systemGray4), lineWidth: 1)
-                                    )
-                            }
                         }
                         
                         Section(header: Text("Apparence")) {
@@ -249,14 +228,10 @@ struct ProfileSettingsView: View {
         username = user.username
         email = user.email
         location = user.locationDisplay ?? ""
-        bio = user.bio ?? ""
-        age = user.age != nil ? "\(user.age!)" : ""
         teachSkills = user.skillsTeach ?? []
         learnSkills = user.skillsLearn ?? []
         originalUsername = username
         originalLocation = location
-        originalBio = bio
-        originalAge = age
     }
 
     private func fetchCities() async {
@@ -286,7 +261,6 @@ struct ProfileSettingsView: View {
 
         let trimmedLocation = location.trimmingCharacters(in: .whitespacesAndNewlines)
         let locationPayload: LocationPayload? = trimmedLocation.isEmpty ? nil : LocationPayload(lat: nil, lon: nil, city: trimmedLocation)
-        let ageValue = Int(age.trimmingCharacters(in: .whitespacesAndNewlines))
 
         let payload = UpdateUserRequest(
             username: username,
@@ -294,9 +268,7 @@ struct ProfileSettingsView: View {
             location: locationPayload,
             skillsTeach: teachSkills,
             skillsLearn: learnSkills,
-            availability: nil,
-            bio: bio.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : bio,
-            age: ageValue
+            availability: nil
         )
 
         do {

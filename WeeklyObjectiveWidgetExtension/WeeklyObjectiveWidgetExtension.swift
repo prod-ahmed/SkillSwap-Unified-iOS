@@ -78,8 +78,12 @@ struct WeeklyObjectiveProvider: TimelineProvider {
             return nil
         }
         
-        // Use stored baseURL or default to production server
-        let defaultURL = "http://145.223.103.252:3001"
+        // Use stored baseURL or default to localhost for simulator
+        #if targetEnvironment(simulator)
+        let defaultURL = "http://localhost:3000"
+        #else
+        let defaultURL = "https://p8hkmhq3-3000.euw.devtunnels.ms"
+        #endif
         
         let baseURL = sharedDefaults?.string(forKey: "baseURL") ?? defaultURL
         print("Widget: Using baseURL: \(baseURL)")
